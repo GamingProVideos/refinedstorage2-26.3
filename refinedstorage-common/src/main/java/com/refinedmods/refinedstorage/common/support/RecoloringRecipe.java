@@ -15,7 +15,7 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
@@ -112,11 +112,11 @@ public class RecoloringRecipe extends ShapelessRecipe {
         final TagKey<Item> ingredient,
         final DyeColor color,
         final Block result,
-        final HolderLookup.Provider registries
+        final HolderGetter<Item> items
     ) {
         return new RecoloringRecipe(
-            Ingredient.of(registries.getOrThrow(ingredient)),
-            registries.getOrThrow(createTag(color)),
+            Ingredient.of(items.getOrThrow(ingredient)),
+            items.getOrThrow(createTag(color)),
             result.asItem().builtInRegistryHolder()
         );
     }

@@ -158,8 +158,7 @@ public class AutocrafterManagerScreen extends AbstractStretchingScreen<Autocraft
                               final int topHeight,
                               final int rows,
                               final int mouseX,
-                              final int mouseY,
-                              final float partialTicks) {
+                              final int mouseY) {
         if (!menu.isActive()) {
             graphics.fill(
                 x + 7 + 1,

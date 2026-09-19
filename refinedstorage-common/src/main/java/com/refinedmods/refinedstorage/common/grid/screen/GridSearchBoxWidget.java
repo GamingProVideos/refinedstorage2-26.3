@@ -12,6 +12,7 @@ import com.refinedmods.refinedstorage.query.lexer.SyntaxHighlighter;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -68,8 +69,16 @@ class GridSearchBoxWidget extends SearchFieldWidget implements GridSearchBox {
     }
 
     private Component toComponent(final SyntaxHighlightedCharacter character) {
-        final ChatFormatting color = ChatFormatting.getByName(character.getColor());
+        final ChatFormatting color = getFormatting(character.getColor());
         return Component.literal(character.getCharacter()).withStyle(color == null ? ChatFormatting.WHITE : color);
+    }
+
+    private static ChatFormatting getFormatting(final String name) {
+        try {
+            return ChatFormatting.valueOf(name.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 
     private Lexer createLexer(final String text) {

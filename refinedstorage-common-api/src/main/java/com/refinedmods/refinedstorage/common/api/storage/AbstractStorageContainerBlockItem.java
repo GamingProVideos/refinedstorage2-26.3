@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -59,15 +60,12 @@ public abstract class AbstractStorageContainerBlockItem extends BlockItem {
     }
 
     @Override
-    protected boolean updateCustomBlockEntityTag(final BlockPos pos,
-                                                 final Level level,
-                                                 @Nullable final Player player,
-                                                 final ItemStack stack,
-                                                 final BlockState state) {
-        if (!level.isClientSide()) {
-            updateBlockEntityTag(pos, level, stack);
+    protected boolean placeBlock(final BlockPlaceContext context, final BlockState state) {
+        final boolean placed = super.placeBlock(context, state);
+        if (placed && !context.getLevel().isClientSide()) {
+            updateBlockEntityTag(context.getClickedPos(), context.getLevel(), context.getItemInHand());
         }
-        return super.updateCustomBlockEntityTag(pos, level, player, stack, state);
+        return placed;
     }
 
     private void updateBlockEntityTag(final BlockPos pos,

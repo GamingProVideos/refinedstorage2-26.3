@@ -24,6 +24,7 @@ import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.cuboid.ItemTransform;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.ItemQuads;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.Item;
@@ -73,7 +74,7 @@ public class PortableGridItemModel implements ItemModel {
         modelRenderProperties.applyToLayer(layer, itemDisplayContext);
         final PortableGridBlockItemRenderInfo renderInfo = PortableGridBlockItem.getRenderInfo(stack);
         renderState.appendModelIdentityElement(renderInfo);
-        layer.prepareQuadList().addAll(renderInfo.active() ? activeBaseQuads : inactiveBaseQuads);
+        layer.setQuads(ItemQuads.split(renderInfo.active() ? activeBaseQuads : inactiveBaseQuads));
         addDisk(renderState, itemDisplayContext, renderInfo.disk());
     }
 
@@ -89,8 +90,9 @@ public class PortableGridItemModel implements ItemModel {
         final ItemStackRenderState.LayerRenderState layer = renderState.newLayer();
         modelRenderProperties.applyToLayer(layer, itemDisplayContext);
         layer.setItemTransform(diskTransforms.get(itemDisplayContext));
-        layer.prepareQuadList().addAll(diskQuads);
-        layer.prepareQuadList().addAll(ledQuadsByState.get(disk.state()));
+        final List<BakedQuad> quads = new java.util.ArrayList<>(diskQuads);
+        quads.addAll(ledQuadsByState.get(disk.state()));
+        layer.setQuads(ItemQuads.split(quads));
     }
 
     private static Matrix4f getOffsetTransform(final ItemTransform baseTransform) {

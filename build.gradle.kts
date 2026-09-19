@@ -9,15 +9,21 @@ refinedarchitect {
     sonarQube("refinedmods_refinedstorage2", "refinedmods")
 }
 
+version = providers.gradleProperty("modVersion").get()
+
 subprojects {
     group = "com.refinedmods.refinedstorage"
+
+    plugins.withId("com.refinedmods.refinedarchitect") {
+        version = providers.gradleProperty("modVersion").get()
+    }
 }
 
 project.extensions.getByType<SonarExtension>().apply {
     properties {
         property(
             "sonar.coverage.exclusions",
-            "refinedstorage-neoforge-api/**/*,refinedstorage-neoforge/**/*,refinedstorage-fabric-api/**/*,refinedstorage-fabric/**/*,refinedstorage-common/**/*,refinedstorage-common-api/**/*"
+            "refinedstorage-neoforge-api/**/*,refinedstorage-neoforge/**/*,refinedstorage-common/**/*,refinedstorage-common-api/**/*"
         )
         property(
             "sonar.exclusions",

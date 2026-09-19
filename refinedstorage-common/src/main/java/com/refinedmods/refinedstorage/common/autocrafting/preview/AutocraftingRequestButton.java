@@ -38,7 +38,7 @@ class AutocraftingRequestButton extends AbstractButton {
             REQUEST_BUTTON_WIDTH - 16 - 4 - 4 - 4,
             0xFFFFFFFF,
             true,
-            TextMarquee.Style.SMALL
+            true
         );
         this.onPress = onPress;
     }
@@ -53,8 +53,8 @@ class AutocraftingRequestButton extends AbstractButton {
         extractDefaultSprite(graphics);
         renderResourceIcon(graphics);
         final int yOffset = SmallText.isSmall() ? 8 : 5;
-        text.updateStateAndRender(graphics, getX() + 3 + 16 + 3, getY() + yOffset, Minecraft.getInstance().font,
-            isHovered, partialTicks);
+        text.render(graphics, getX() + 3 + 16 + 3, getY() + yOffset, Minecraft.getInstance().font, isHovered,
+            partialTicks);
     }
 
     private void renderResourceIcon(final GuiGraphicsExtractor graphics) {

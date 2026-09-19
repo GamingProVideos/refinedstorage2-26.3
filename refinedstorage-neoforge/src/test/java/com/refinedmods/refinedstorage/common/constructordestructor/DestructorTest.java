@@ -10,6 +10,7 @@ import java.util.Set;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 import static com.refinedmods.refinedstorage.common.GameTestUtil.MOD_ITEMS;
 import static com.refinedmods.refinedstorage.common.GameTestUtil.asResource;
@@ -201,9 +202,9 @@ public final class DestructorTest {
 
             // Assert
             sequence
-                .thenExecute(() -> helper.spawnItem(DIRT, pos.east().getCenter()))
+                .thenExecute(() -> helper.spawnItem(DIRT, Vec3.atCenterOf(pos.east())))
                 .thenWaitUntil(() -> helper.assertItemEntityNotPresent(DIRT, pos.east(), 2))
-                .thenExecute(() -> helper.spawnItem(STONE, pos.east().getCenter()))
+                .thenExecute(() -> helper.spawnItem(STONE, Vec3.atCenterOf(pos.east())))
                 .thenIdle(20)
                 .thenExecute(() -> helper.assertItemEntityPresent(STONE, pos.east(), 2))
                 .thenWaitUntil(storageContainsExactly(

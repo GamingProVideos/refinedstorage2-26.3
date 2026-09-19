@@ -9,7 +9,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 class FullscreenTreePreviewScreen extends Screen {
     private final Screen parent;
@@ -42,8 +42,8 @@ class FullscreenTreePreviewScreen extends Screen {
 
     @Override
     public boolean keyPressed(final KeyEvent event) {
-        if (event.key() == GLFW.GLFW_KEY_ESCAPE) {
-            Minecraft.getInstance().setScreen(parent);
+        if (event.key() == InputConstants.KEY_ESCAPE) {
+            Minecraft.getInstance().gui.setScreen(parent);
             return true;
         }
         return super.keyPressed(event);

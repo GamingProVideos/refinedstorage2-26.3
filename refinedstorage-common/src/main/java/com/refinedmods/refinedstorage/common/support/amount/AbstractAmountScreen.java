@@ -18,18 +18,23 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
+import static com.refinedmods.refinedstorage.common.support.Sprites.ICON_SIZE;
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createTranslation;
+import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N extends Number>
     extends AbstractBaseScreen<T> {
-    static final MutableComponent RESET_TEXT = createTranslation("gui", "configure_amount.reset");
-    static final MutableComponent CANCEL_TEXT = Component.translatable("gui.cancel");
+    private static final MutableComponent RESET_TEXT = createTranslation("gui", "configure_amount.reset");
+    private static final MutableComponent CANCEL_TEXT = Component.translatable("gui.cancel");
 
     private static final int INCREMENT_BUTTON_WIDTH = 30;
+    private static final int ACTION_BUTTON_HEIGHT = 20;
+    private static final int ACTION_BUTTON_WIDTH = 58;
+    private static final int ACTION_BUTTON_SPACING = 20;
 
     @Nullable
     protected ActionButton confirmButton;
@@ -67,30 +72,47 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     private void addActionButtons() {
-        addResetButton(configuration.getActionButtonPositions().reset());
-        addCancelButton(configuration.getActionButtonPositions().cancel());
-        addConfirmButton(configuration.getActionButtonPositions().confirm());
+        final Vector3f pos = configuration.getActionButtonsStartPosition();
+        if (configuration.isHorizontalActionButtons()) {
+            final int spacing = 3;
+            addCancelButton((int) pos.x, (int) pos.y);
+            final Button resetButton = addResetButton((int) pos.x + requireNonNull(cancelButton).getWidth() + spacing,
+                (int) pos.y);
+            addConfirmButton((int) pos.x + cancelButton.getWidth() + spacing + resetButton.getWidth() + spacing,
+                (int) pos.y);
+        } else {
+            final int spacing = 24;
+            addResetButton((int) pos.x, (int) pos.y);
+            addConfirmButton((int) pos.x, (int) pos.y + spacing);
+            addCancelButton((int) pos.x, (int) pos.y + spacing * 2);
+        }
     }
 
-    private void addResetButton(final AmountScreenConfiguration.ActionButtonPositionAndSize dim) {
+    private Button addResetButton(final int x, final int y) {
+        final int width = configuration.isHorizontalActionButtons()
+            ? font.width(RESET_TEXT) + ACTION_BUTTON_SPACING + ICON_SIZE
+            : ACTION_BUTTON_WIDTH;
         final ActionButton button = new ActionButton(
-            leftPos + dim.pos().x,
-            topPos + dim.pos().y,
-            dim.size().x,
-            dim.size().y,
+            leftPos + x,
+            topPos + y,
+            width,
+            ACTION_BUTTON_HEIGHT,
             RESET_TEXT,
             btn -> reset()
         );
         button.setIcon(ActionIcon.RESET);
-        addRenderableWidget(button);
+        return addRenderableWidget(button);
     }
 
-    private void addConfirmButton(final AmountScreenConfiguration.ActionButtonPositionAndSize dim) {
+    private void addConfirmButton(final int x, final int y) {
+        final int width = configuration.isHorizontalActionButtons()
+            ? font.width(configuration.getConfirmButtonText()) + ACTION_BUTTON_SPACING + ICON_SIZE
+            : ACTION_BUTTON_WIDTH;
         final ActionButton button = new ActionButton(
-            leftPos + dim.pos().x,
-            topPos + dim.pos().y,
-            dim.size().x,
-            dim.size().y,
+            leftPos + x,
+            topPos + y,
+            width,
+            ACTION_BUTTON_HEIGHT,
             configuration.getConfirmButtonText(),
             btn -> tryConfirmAndCloseToParent()
         );
@@ -103,12 +125,15 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         return ActionIcon.SET;
     }
 
-    private void addCancelButton(final AmountScreenConfiguration.ActionButtonPositionAndSize dim) {
+    private void addCancelButton(final int x, final int y) {
+        final int width = configuration.isHorizontalActionButtons()
+            ? font.width(CANCEL_TEXT) + ACTION_BUTTON_SPACING + ICON_SIZE
+            : ACTION_BUTTON_WIDTH;
         final ActionButton button = new ActionButton(
-            leftPos + dim.pos().x,
-            topPos + dim.pos().y,
-            dim.size().x,
-            dim.size().y,
+            leftPos + x,
+            topPos + y,
+            width,
+            ACTION_BUTTON_HEIGHT,
             CANCEL_TEXT,
             btn -> close()
         );
@@ -117,12 +142,12 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     private void addAmountField() {
-        final Vector2i pos = configuration.getAmountFieldPosition();
+        final Vector3f pos = configuration.getAmountFieldPosition();
         final String originalValue = amountField != null ? amountField.getValue() : null;
         amountField = new EditBox(
             font,
-            leftPos + pos.x(),
-            topPos + pos.y(),
+            leftPos + (int) pos.x(),
+            topPos + (int) pos.y(),
             configuration.getAmountFieldWidth() - 6,
             font.lineHeight,
             Component.empty()
@@ -169,17 +194,17 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     private void addIncrementButtons() {
-        final Vector2i incrementsTopPos = configuration.getIncrementsTopStartPosition();
+        final Vector3f incrementsTopPos = configuration.getIncrementsTopStartPosition();
         addIncrementButtons(
             configuration.getIncrementsTop(),
-            leftPos + incrementsTopPos.x,
-            topPos + incrementsTopPos.y
+            leftPos + (int) incrementsTopPos.x,
+            topPos + (int) incrementsTopPos.y
         );
-        final Vector2i incrementsBottomPos = configuration.getIncrementsBottomStartPosition();
+        final Vector3f incrementsBottomPos = configuration.getIncrementsBottomStartPosition();
         addIncrementButtons(
             configuration.getIncrementsBottom(),
-            leftPos + incrementsBottomPos.x,
-            topPos + incrementsBottomPos.y
+            leftPos + (int) incrementsBottomPos.x,
+            topPos + (int) incrementsBottomPos.y
         );
     }
 
@@ -197,7 +222,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
         final Component text = Component.literal((increment > 0 ? "+" : "") + increment);
         return Button.builder(text, btn -> changeAmount(increment))
             .pos(x, y)
-            .size(INCREMENT_BUTTON_WIDTH, 20)
+            .size(INCREMENT_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT)
             .build();
     }
 
@@ -258,7 +283,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
             return true;
         }
         if (amountField != null
-            && (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER)
+            && (key == InputConstants.KEY_RETURN || key == InputConstants.KEY_NUMPADENTER)
             && amountField.isFocused()) {
             tryConfirmAndCloseToParent();
             return true;
@@ -270,7 +295,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
     }
 
     protected final boolean tryClose(final int key) {
-        if (key == GLFW.GLFW_KEY_ESCAPE) {
+        if (key == InputConstants.KEY_ESCAPE) {
             close();
             return true;
         }
@@ -299,7 +324,7 @@ public abstract class AbstractAmountScreen<T extends AbstractContainerMenu, N ex
 
     private boolean tryCloseToParent() {
         if (parent != null) {
-            Minecraft.getInstance().setScreen(parent);
+            Minecraft.getInstance().gui.setScreen(parent);
             return true;
         }
         return false;

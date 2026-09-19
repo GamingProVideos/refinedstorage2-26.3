@@ -1,5 +1,0 @@
-= Upgrade
-:icon: upgrade.png
-:from: v0.6.0-alpha
-
-The {doctitle} is the base component used to craft xref:index.adoc[all types of upgrades].

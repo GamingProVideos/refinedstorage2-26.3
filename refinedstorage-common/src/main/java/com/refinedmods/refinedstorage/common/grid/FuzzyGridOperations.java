@@ -15,6 +15,7 @@ import java.net.URI;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.TypedDataComponent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -59,11 +60,15 @@ public class FuzzyGridOperations implements GridOperations {
         if (!success) {
             LOGGER.warn("Failed to extract resource in Grid: {}", resource);
             if (resource instanceof ItemResource itemResource) {
-                itemResource.components().entrySet().forEach(e -> {
-                    final DataComponentType<?> componentType = e.getKey();
+                for (final TypedDataComponent<?> component : itemResource.components().split().added()) {
+                    final DataComponentType<?> componentType = component.type();
                     final Identifier key = BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(componentType);
-                    LOGGER.warn("Component {} = {}", key, e.getValue());
-                });
+                    LOGGER.warn("Component {} = {}", key, component.value());
+                }
+                for (final DataComponentType<?> componentType : itemResource.components().split().removed()) {
+                    final Identifier key = BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(componentType);
+                    LOGGER.warn("Component {} = <removed>", key);
+                }
             }
         }
         if (!success && tryFuzzyExtractBecauseModHasUnstableDataComponentEquality(resource, extractMode, destination)) {

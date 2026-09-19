@@ -1,0 +1,100 @@
+import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
+import org.gradle.language.jvm.tasks.ProcessResources
+import net.neoforged.moddevgradle.dsl.NeoForgeExtension as NeoForge
+
+open class NeoForgeExtension(private val project: Project) : BaseExtension(project) {
+    var modId: String? = null
+
+    fun neoForge() {
+        val sourceSets = project.extensions.getByType<JavaPluginExtension>().sourceSets
+        project.configurations["commonJava"].isCanBeResolved = true
+        project.configurations["commonJava"].isCanBeConsumed = modId == null
+        project.configurations["commonResources"].isCanBeResolved = true
+        project.configurations["commonResources"].isCanBeConsumed = modId == null
+        val generateModMetadata = project.tasks.register("generateModMetadata", ProcessResources::class) {
+            val properties = mapOf("version" to project.version)
+            inputs.properties(properties)
+            expand(properties)
+            from("src/main/templates")
+            into("build/generated/sources/modMetadata")
+        }
+        sourceSets["main"].resources.srcDir(generateModMetadata)
+        sourceSets["main"].resources.srcDirs.add(project.file("src/generated/resources"))
+        project.extensions.getByType<NeoForge>().apply {
+            setVersion(neoForgeVersion)
+            addModdingDependenciesTo(sourceSets["test"])
+            if (modId != null) {
+                mods {
+                    register(modId!!) {
+                        modSourceSets.set(listOf(sourceSets["main"], sourceSets["test"]))
+                    }
+                }
+                runs {
+                    register("client") {
+                        client()
+                    }
+                    register("server") {
+                        server()
+                        programArgument("--nogui")
+                    }
+                }
+            }
+            ideSyncTask(generateModMetadata)
+        }
+        project.tasks.named("compileJava", JavaCompile::class.java) {
+            dependsOn(project.configurations["commonJava"])
+            source(project.configurations["commonJava"])
+        }
+        project.tasks.named("processResources", ProcessResources::class.java) {
+            if (name != "generateModMetadata") {
+                dependsOn(project.configurations["commonResources"])
+                from(project.configurations["commonResources"])
+            }
+        }
+        project.tasks.withType<Jar>().configureEach {
+            from("../LICENSE.md")
+        }
+    }
+
+    fun gameTests() {
+        project.dependencies.add("testImplementation", "net.neoforged:testframework:${neoForgeVersion}")
+        val sourceSets = project.extensions.getByType<JavaPluginExtension>().sourceSets
+        project.extensions.getByType<NeoForge>().apply {
+            runs {
+                register("gameTestServer") {
+                    type.set("gameTestServer")
+                    systemProperty("neoforge.enabledGameTestNamespaces", modId!!)
+                    sourceSet.set(sourceSets["test"])
+                }
+            }
+        }
+        // This avoids a build failure when running the "test" task, because there is no JUnit engine
+        // in this subproject.
+        // The test source set in this subproject is used for Minecraft game tests, not for JUnit tests.
+        project.tasks.getByName("test").onlyIf { false }
+    }
+
+    fun dataGeneration(sourceProject: Project = project) {
+        project.extensions.getByType<NeoForge>().apply {
+            runs {
+                create("data") {
+                    clientData()
+                    programArgument("--mod")
+                    programArgument(modId!!)
+                    programArgument("--all")
+                    programArgument("--output")
+                    programArgument(sourceProject.file("src/generated/resources/").absolutePath)
+                    programArgument("--existing")
+                    programArgument(sourceProject.file("src/main/resources/").absolutePath)
+                }
+            }
+        }
+    }
+}

@@ -1,7 +1,0 @@
-= Autocrafting
-
-- xref:pattern-grid.adoc[]
-- xref:pattern.adoc[]
-- xref:autocrafter.adoc[]
-- xref:autocrafting-monitor.adoc[]
-- xref:autocrafter-manager.adoc[]

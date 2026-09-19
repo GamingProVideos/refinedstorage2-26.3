@@ -28,12 +28,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.util.IdentifierUtil.createIdentifier;
@@ -90,13 +90,12 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
             AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Double>create()
                 .withInitialAmount(slot.getDisplayAmount())
                 .withIncrementsTop(1, 10, 64)
-                .withIncrementsTopStartPosition(49, 20)
+                .withIncrementsTopStartPosition(new Vector3f(49, 20, 0))
                 .withIncrementsBottom(-1, -10, -64)
-                .withIncrementsBottomStartPosition(49, 71)
-                .withAmountFieldPosition(47, 51)
-                .withResetButton(7, 199)
-                .withCancelButton(7, 199 + 24)
-                .withConfirmButton(width -> new Vector2i(193 - width - 7, 199 + 24))
+                .withIncrementsBottomStartPosition(new Vector3f(49, 71, 0))
+                .withAmountFieldPosition(new Vector3f(47, 51, 0))
+                .withActionButtonsStartPosition(new Vector3f(7, 199, 0))
+                .withHorizontalActionButtons(true)
                 .withMinAmount(() -> slot.getResource() != null
                     ? slot.getResource().getResourceType().getDisplayAmount(1)
                     : 1)
@@ -105,7 +104,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
                 .build(),
             DoubleAmountOperations.INSTANCE,
             193,
-            250
+            226
         );
         this.slot = slot;
         this.initialAllowedAlternativeIds = allowedAlternativeIds;
@@ -172,7 +171,7 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
     private void addWidgetsForAlternative(final int idx, final int x) {
         final Alternative alternative = getMenu().getAlternatives().get(idx);
         final int y = getAlternativeY(idx);
-        final boolean hasTranslation = I18n.exists(alternative.getTranslationKey());
+        final boolean hasTranslation = Language.getInstance().has(alternative.getTranslationKey());
         final MutableComponent id = Component.literal(alternative.getId().toString());
         final CheckboxWidget alternativeCheckbox = new CheckboxWidget(
             x + 2,
@@ -314,13 +313,6 @@ public class AlternativesScreen extends AbstractAmountScreen<AlternativeContaine
         if (scrollbar != null) {
             scrollbar.extractRenderState(graphics, mouseX, mouseY, partialTicks);
         }
-    }
-
-    @Override
-    protected void extractDefaultBackground(final GuiGraphicsExtractor graphics) {
-        final int x = (width - imageWidth) / 2;
-        final int y = (height - imageHeight) / 2;
-        graphics.blit(GUI_TEXTURED, getTexture(), x, y, 0, 0, imageWidth, imageHeight, 512, 512);
     }
 
     @Override

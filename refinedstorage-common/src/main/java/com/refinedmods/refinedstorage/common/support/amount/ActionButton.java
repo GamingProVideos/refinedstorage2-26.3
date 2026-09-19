@@ -10,8 +10,6 @@ import static com.refinedmods.refinedstorage.common.support.Sprites.ICON_SIZE;
 import static net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED;
 
 public class ActionButton extends Button {
-    private static final int ICON_SPACING = 4;
-
     @Nullable
     private ActionIcon icon;
 
@@ -29,8 +27,7 @@ public class ActionButton extends Button {
                                    final float partialTicks) {
         extractDefaultSprite(graphics);
         if (icon != null) {
-            graphics.blitSprite(GUI_TEXTURED, icon.getSprite(), getX() + ICON_SPACING, getY() + ICON_SPACING,
-                ICON_SIZE, ICON_SIZE);
+            graphics.blitSprite(GUI_TEXTURED, icon.getSprite(), getX() + 4, getY() + 4, ICON_SIZE, ICON_SIZE);
         }
         extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
     }
@@ -38,9 +35,9 @@ public class ActionButton extends Button {
     @Override
     public void extractScrollingStringOverContents(final ActiveTextCollector output, final Component message,
                                                    final int margin) {
-        final int offset = icon != null ? (ICON_SIZE + ICON_SPACING) : 0;
+        final int offset = icon != null ? (ICON_SIZE - 6) : 0;
         final int left = this.getX() + margin + offset;
-        final int right = this.getX() + this.getWidth() - margin;
+        final int right = this.getX() + this.getWidth() + offset - margin;
         final int top = this.getY();
         final int bottom = this.getY() + this.getHeight();
         output.acceptScrollingWithDefaultCenter(message, left, right, top, bottom);

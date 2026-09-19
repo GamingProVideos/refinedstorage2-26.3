@@ -59,7 +59,6 @@ import net.neoforged.neoforge.client.event.RegisterSelectItemModelPropertyEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
 import net.neoforged.neoforge.common.NeoForge;
-import org.lwjgl.glfw.GLFW;
 
 import static com.refinedmods.refinedstorage.common.content.ContentIds.CABLE;
 import static com.refinedmods.refinedstorage.common.content.ContentIds.DISK_DRIVE;
@@ -132,8 +131,8 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
 
         final KeyMapping focusSearchBarKeyBinding = new KeyMapping(
             ContentNames.FOCUS_SEARCH_BAR_TRANSLATION_KEY,
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_TAB,
+            InputConstants.Type.KEYBOARD,
+            InputConstants.KEY_TAB,
             category
         );
         e.register(focusSearchBarKeyBinding);
@@ -143,8 +142,8 @@ public final class ClientModInitializer extends AbstractClientModInitializer {
             ContentNames.CLEAR_CRAFTING_MATRIX_TO_NETWORK_TRANSLATION_KEY,
             KeyConflictContext.GUI,
             KeyModifier.CONTROL,
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_X,
+            InputConstants.Type.KEYBOARD,
+            InputConstants.KEY_X,
             category
         );
         e.register(clearCraftingGridMatrixToNetwork);

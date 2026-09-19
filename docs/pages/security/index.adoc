@@ -1,5 +1,0 @@
-= Security
-
-- xref:security-manager.adoc[]
-- xref:security-card.adoc[]
-- xref:fallback-security-card.adoc[]

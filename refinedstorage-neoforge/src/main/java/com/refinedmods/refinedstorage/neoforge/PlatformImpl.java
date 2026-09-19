@@ -124,10 +124,8 @@ public final class PlatformImpl extends AbstractPlatform {
 
     @Override
     public boolean isKeyDown(final KeyMapping keyMapping) {
-        return !keyMapping.isUnbound() && InputConstants.isKeyDown(
-            Minecraft.getInstance().getWindow(),
-            keyMapping.getKey().getValue()
-        );
+        return !keyMapping.isUnbound()
+            && InputConstants.isKeyDown(keyMapping.getKey().getValue());
     }
 
     @Override
@@ -265,7 +263,7 @@ public final class PlatformImpl extends AbstractPlatform {
             return false;
         }
         final net.neoforged.neoforge.transfer.fluid.FluidResource platformResource = toPlatform(fluidResource);
-        return FluidUtil.tryPlaceFluid(platformResource, player, level, pos, true);
+        return FluidUtil.tryPlaceFluid(platformResource, player, level, pos, false);
     }
 
     @Override

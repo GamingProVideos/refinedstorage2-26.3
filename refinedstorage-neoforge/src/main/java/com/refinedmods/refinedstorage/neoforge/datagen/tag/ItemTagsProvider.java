@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
@@ -151,19 +152,27 @@ public class ItemTagsProvider extends BlockTagCopyingItemTagProvider {
             Blocks.INSTANCE.getAutocraftingMonitor().values().stream()
                 .map(block -> (Supplier<Item>) block::asItem)
                 .toList());
-        tag(WRENCH).add(Items.INSTANCE.getWrench()).replace(false);
-        tag(SILICON).add(Items.INSTANCE.getSilicon()).replace(false);
-        tag(INGOTS)
-            .add(Items.INSTANCE.getQuartzEnrichedIron())
-            .add(Items.INSTANCE.getQuartzEnrichedCopper())
-            .replace(false);
+        addToTag(WRENCH, Items.INSTANCE.getWrench());
+        addToTag(SILICON, Items.INSTANCE.getSilicon());
+        addToTag(
+            INGOTS,
+            Items.INSTANCE.getQuartzEnrichedIron(),
+            Items.INSTANCE.getQuartzEnrichedCopper()
+        );
     }
 
     private <T extends Item> void addAllToTag(final TagKey<Item> t, final Collection<Supplier<T>> items) {
-        tag(t).add(items.stream().map(Supplier::get).toArray(Item[]::new)).replace(false);
+        addToTag(t, items.stream().map(Supplier::get).toArray(Item[]::new));
     }
 
     private void addAllToTag2(final TagKey<Item> t, final Collection<Supplier<BaseBlockItem>> items) {
-        tag(t).add(items.stream().map(Supplier::get).toArray(Item[]::new)).replace(false);
+        addToTag(t, items.stream().map(Supplier::get).toArray(Item[]::new));
+    }
+
+    private void addToTag(final TagKey<Item> tag, final Item... items) {
+        final var builder = getOrCreateRawBuilder(tag);
+        Arrays.stream(items)
+            .map(BuiltInRegistries.ITEM::getKey)
+            .forEach(builder::addElement);
     }
 }

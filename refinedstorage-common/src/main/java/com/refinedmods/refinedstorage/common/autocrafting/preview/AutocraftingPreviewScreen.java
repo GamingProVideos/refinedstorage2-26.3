@@ -35,7 +35,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
-import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
 import static com.refinedmods.refinedstorage.common.autocrafting.monitor.AutocraftingMonitorScreen.darkenARGB;
@@ -177,20 +177,18 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
             AmountScreenConfiguration.AmountScreenConfigurationBuilder.<Double>create()
                 .withInitialAmount(1D)
                 .withIncrementsTop(1, 10, 64)
-                .withIncrementsTopStartPosition(80, 20)
+                .withIncrementsTopStartPosition(new Vector3f(80, 20, 0))
                 .withIncrementsBottom(-1, -10, -64)
-                .withIncrementsBottomStartPosition(80, 71)
-                .withAmountFieldPosition(77, 51)
-                .withConfirmButtonText(START)
-                .withResetButton(7, 222)
-                .withCancelButton(7, 246)
-                .withConfirmButton(width -> new Vector2i(254 - width - 6, 246))
+                .withIncrementsBottomStartPosition(new Vector3f(80, 71, 0))
+                .withAmountFieldPosition(new Vector3f(77, 51, 0))
+                .withActionButtonsStartPosition(new Vector3f(7, 222, 0))
+                .withHorizontalActionButtons(true)
                 .withMinAmount(menu::getMinAmount)
                 .withResetAmount(1D)
+                .withConfirmButtonText(START)
                 .build(),
             DoubleAmountOperations.INSTANCE,
-            254,
-            273
+            254, 249
         );
         this.requestsButtonsVisible = getMenu().getRequests().size() > 1;
         getMenu().setListener(this);
@@ -278,7 +276,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         if (treePreview == null || treePreview.rootNode() == null) {
             return;
         }
-        Minecraft.getInstance().setScreen(new FullscreenTreePreviewScreen(this, treePreview));
+        Minecraft.getInstance().gui.setScreen(new FullscreenTreePreviewScreen(this, treePreview));
     }
 
     private void toggleStyle(final ImageButton btn) {
@@ -437,13 +435,6 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
         } else if (style == AutocraftingPreviewStyle.TREE) {
             renderTreePreview(graphics, mouseX, mouseY, x, y);
         }
-    }
-
-    @Override
-    protected void extractDefaultBackground(final GuiGraphicsExtractor graphics) {
-        final int x = (width - imageWidth) / 2;
-        final int y = (height - imageHeight) / 2;
-        graphics.blit(GUI_TEXTURED, getTexture(), x, y, 0, 0, imageWidth, imageHeight, 512, 512);
     }
 
     @Override
@@ -775,8 +766,7 @@ public class AutocraftingPreviewScreen extends AbstractAmountScreen<Autocrafting
                 x,
                 y,
                 DefaultTooltipPositioner.INSTANCE,
-                null
-            );
+                null, false);
         }
     }
 

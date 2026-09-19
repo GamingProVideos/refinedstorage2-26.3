@@ -1,0 +1,22 @@
+package com.refinedmods.refinedstorage.jei.neoforge;
+
+import com.refinedmods.refinedstorage.common.api.RefinedStorageApi;
+import com.refinedmods.refinedstorage.jei.common.Common;
+
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+
+import static com.refinedmods.refinedstorage.jei.common.Common.init;
+
+@Mod(Common.MOD_ID)
+public class ModInitializer {
+    public ModInitializer(final IEventBus eventBus) {
+        Common.setPlatform(new NeoForgePlatform());
+        eventBus.addListener(this::onCommonSetup);
+    }
+
+    private void onCommonSetup(final FMLCommonSetupEvent e) {
+        init(RefinedStorageApi.INSTANCE);
+    }
+}

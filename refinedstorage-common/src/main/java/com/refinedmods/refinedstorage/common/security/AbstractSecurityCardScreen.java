@@ -169,8 +169,7 @@ public abstract class AbstractSecurityCardScreen<T extends AbstractSecurityCardC
                               final int topHeight,
                               final int rows,
                               final int mouseX,
-                              final int mouseY,
-                              final float partialTicks) {
+                              final int mouseY) {
         for (final Permission permission : permissions) {
             permission.render(graphics, mouseX, mouseY);
         }

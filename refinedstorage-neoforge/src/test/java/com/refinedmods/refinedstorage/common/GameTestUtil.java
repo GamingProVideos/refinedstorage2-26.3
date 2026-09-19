@@ -45,7 +45,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -221,7 +221,7 @@ public final class GameTestUtil {
                                                       final BlockPos pos,
                                                       final double expansionAmount) {
         final BlockPos blockpos = helper.absolutePos(pos);
-        final Iterator<ItemEntity> entityIterator = helper.getLevel().getEntities(EntityType.ITEM,
+        final Iterator<ItemEntity> entityIterator = helper.getLevel().getEntities(EntityTypes.ITEM,
             (new AABB(blockpos)).inflate(expansionAmount), Entity::isAlive).iterator();
 
         ItemEntity itemEntity;

@@ -8,7 +8,7 @@ import java.util.List;
 
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.FluidState;
 
@@ -168,7 +168,7 @@ public final class ConstructorTest {
             // Assert
             sequence
                 .thenWaitUntil(() -> helper.assertBlockPresent(Blocks.AIR, pos.east()))
-                .thenWaitUntil(() -> helper.assertEntityPresent(EntityType.FIREWORK_ROCKET, pos.east()))
+                .thenWaitUntil(() -> helper.assertEntityPresent(EntityTypes.FIREWORK_ROCKET, pos.east()))
                 .thenWaitUntil(storageContainsExactly(
                     helper,
                     pos,

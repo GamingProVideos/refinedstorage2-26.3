@@ -1,3 +1,15 @@
+# Refined Storage — NeoForge 26.3 Community Port
+
+> **NeoForge-only source tree.** The Fabric platform modules and Fabric build plugin have been removed from this package.
+
+Target: **Minecraft 26.3** / **NeoForge 26.3.0.4-beta** / **Java 25**.
+
+Main platform module: `refinedstorage-neoforge`  
+NeoForge API module: `refinedstorage-neoforge-api`  
+NeoForge JEI integration: `refinedstorage-jei-integration-neoforge`
+
+---
+
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
   <img width="280" alt="Refined Storage logo" src="https://raw.githubusercontent.com/refinedmods/refinedstorage2/develop/images/logo.png" />
@@ -34,7 +46,23 @@ this mod that allow the player to set up auto-crafting, allowing the crafting of
 
 ## Building
 
-Clone the repository and import the Gradle project.
+This package is NeoForge-only. On Windows with Java 25 installed, run:
+
+```powershell
+.\build-neoforge.bat
+```
+
+Or build only the main mod:
+
+```powershell
+.\gradlew.bat :refinedstorage-neoforge:build
+```
+
+Run the development client with:
+
+```powershell
+.\run-neoforge-client.bat
+```
 
 ## Contributing
 

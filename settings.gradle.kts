@@ -17,6 +17,8 @@ dependencyResolutionManagement {
 }
 
 pluginManagement {
+    includeBuild("build-logic/refinedarchitect")
+
     repositories {
         mavenCentral()
         gradlePluginPortal()
@@ -27,10 +29,6 @@ pluginManagement {
                 includeGroupAndSubgroups("com.refinedmods.refinedarchitect")
             }
         }
-        maven {
-            name = "Fabric"
-            url = uri("https://maven.fabricmc.net/")
-        }
     }
     val refinedarchitectVersion: String by settings
     plugins {
@@ -38,7 +36,6 @@ pluginManagement {
         id("com.refinedmods.refinedarchitect.base").version(refinedarchitectVersion)
         id("com.refinedmods.refinedarchitect.common").version(refinedarchitectVersion)
         id("com.refinedmods.refinedarchitect.neoforge").version(refinedarchitectVersion)
-        id("com.refinedmods.refinedarchitect.fabric").version(refinedarchitectVersion)
     }
 }
 
@@ -52,8 +49,8 @@ include("refinedstorage-network-api")
 include("refinedstorage-network")
 include("refinedstorage-common-api")
 include("refinedstorage-common")
-include("refinedstorage-fabric")
-include("refinedstorage-fabric-api")
 include("refinedstorage-neoforge")
 include("refinedstorage-neoforge-api")
 include("refinedstorage-network-test")
+include("refinedstorage-jei-integration-common")
+include("refinedstorage-jei-integration-neoforge")
